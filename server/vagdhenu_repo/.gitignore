@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pt
+*.pth
+*.safetensors
+*.wav
+*.mp4
+*.m4a
+!examples/**/*.wav
+.DS_Store
+.venv/
+BigVGAN/
+demo/BigVGAN/
+!src/reference_bank/*.wav

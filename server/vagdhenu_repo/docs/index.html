@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vāgdhenu — A Vṛtta-Aware Śloka-to-Chant TTS for Sanskrit</title>
+<meta name="description" content="Vāgdhenu: a meter-aware Sanskrit śloka-to-chant text-to-speech system. Prof. Prathosh A P, Indian Institute of Science, Bengaluru.">
+<meta property="og:title" content="Vāgdhenu — Sanskrit Śloka-to-Chant TTS">
+<meta property="og:description" content="A vṛtta (meter) aware śloka-to-chant system for Sanskrit. Try the live demo, hear sample chants, read the paper.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Serif+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#2a2018; --soft:#6d6256; --accent:#a8330d; --gold:#bd8a2d;
+    --line:#ece2d2; --bg:#fdfaf4; --card:#ffffff;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:#2a2018;
+        font-family:'Spectral',Georgia,serif;font-size:18px;line-height:1.65;
+        -webkit-font-smoothing:antialiased}
+  .wrap{max-width:780px;margin:0 auto;padding:0 1.3rem}
+  a{color:#a8330d;text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* hero */
+  header.hero{background:
+      radial-gradient(1200px 380px at 50% -120px, #fbe6c9 0%, rgba(251,230,201,0) 70%),
+      linear-gradient(170deg,#fdf4e2 0%, #fbeed9 55%, #fdfaf4 100%);
+      border-bottom:1px solid #efe2cb;text-align:center;
+      padding:3.6rem 1.3rem 2.7rem}
+  .sanskrit{font-family:'Noto Serif Devanagari',serif;color:#bd8a2d;
+             font-size:1.35rem;letter-spacing:.03em;margin:0 0 .35rem}
+  h1{font-size:3.3rem;line-height:1;margin:.1rem 0 .5rem;font-weight:700;
+      color:#7a1f0d;letter-spacing:-.02em}
+  .tag{font-size:1.22rem;font-style:italic;color:#5c5145;margin:.2rem auto 1.1rem;max-width:30em}
+  .by{color:#6d6256;font-size:1rem;margin:0 0 .7rem}
+  .by a{color:#6d6256}
+  .disclaimer{display:inline-block;margin:0 auto 1.4rem;padding:.55rem .95rem;
+      background:rgba(168,51,13,.06);border:1px solid #e6c79d;border-radius:10px;
+      color:#7a1f0d;font-size:.9rem;max-width:34em;line-height:1.55;text-align:left}
+  .disclaimer strong{color:#a8330d}
+  .pills{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-top:.4rem}
+  .pill{display:inline-block;padding:.42rem .95rem;border:1px solid #e0cfa8;border-radius:999px;
+         background:rgba(255,255,255,.6);color:#7a1f0d;font-size:.95rem;font-weight:500;
+         transition:all .15s ease}
+  .pill:hover{background:#a8330d;color:#fff;border-color:#a8330d;text-decoration:none}
+  .pill.primary{background:#a8330d;color:#fff;border-color:#a8330d}
+  .pill.primary:hover{background:#7a1f0d;border-color:#7a1f0d}
+
+  section{padding:2.6rem 0}
+  section + section{border-top:1px solid #f1e9da}
+  h2{font-family:'Spectral',serif;font-size:.92rem;text-transform:uppercase;letter-spacing:.14em;
+      color:#a8330d;font-weight:600;margin:0 0 .3rem}
+  h2 + .lead{color:#6d6256;margin:.1rem 0 1.3rem;font-style:italic}
+  p{margin:.7rem 0}
+
+  .demo{border:1px solid #ece2d2;border-radius:14px;overflow:hidden;background:#fff;
+         box-shadow:0 10px 30px -18px rgba(122,31,13,.35)}
+  .demo iframe{display:block;width:100%;height:830px;border:0}
+  .note{font-size:.9rem;color:#8a7e6f;margin:.6rem 2px 0}
+
+  .clips{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+  @media(max-width:600px){ .clips{grid-template-columns:1fr} }
+  .clip{margin:0;background:#fff;border:1px solid #ece2d2;border-radius:12px;
+         padding:1.05rem 1.15rem;box-shadow:0 6px 18px -16px rgba(0,0,0,.35)}
+  .clip-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap}
+  .badge{font-style:italic;font-weight:600;color:#fff;background:#a8330d;
+          padding:.16rem .7rem;border-radius:999px;font-size:.92rem}
+  .src{color:#8a7e6f;font-size:.9rem}
+  .verse{font-family:'Noto Serif Devanagari',serif;font-size:1.12rem;line-height:1.95;
+          color:#332a20;margin:.6rem 0 .8rem}
+  audio{width:100%;height:40px}
+  audio::-webkit-media-controls-panel{background:#faf4e8}
+
+  .deploy p{margin:.45rem 0}
+
+  /* Bhāgavata-VāNi app card */
+  .appcard{background:
+      radial-gradient(900px 260px at 50% -80px, #fbe6c9 0%, rgba(251,230,201,0) 70%), #fff;
+      border:1px solid #ece2d2;border-radius:14px;padding:1.7rem 1.5rem;text-align:center;
+      box-shadow:0 10px 30px -18px rgba(122,31,13,.35)}
+  .app-sanskrit{font-family:'Noto Serif Devanagari',serif;color:#bd8a2d;font-size:1.18rem;
+      letter-spacing:.02em;margin:0 0 .15rem}
+  .app-name{font-size:1.95rem;color:#7a1f0d;font-weight:700;margin:.1rem 0 .55rem;letter-spacing:-.01em}
+  .app-desc{color:#5c5145;max-width:34em;margin:.2rem auto 1.15rem}
+  .appcard .pills{justify-content:center}
+
+  footer{padding:2rem 0 3rem;color:#8a7e6f;font-size:.92rem;text-align:center}
+  footer strong{color:#5c5145}
+  @media(max-width:560px){ h1{font-size:2.5rem} body{font-size:17px} .demo iframe{height:860px} }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <p class="sanskrit">॥ वाचं धेनुमुपासीत ॥</p>
+    <h1>Vāgdhenu</h1>
+    <p class="tag">A vṛtta (meter) aware śloka-to-chant text-to-speech system for Sanskrit.</p>
+    <p class="by">Prof. Prathosh A P · Indian Institute of Science, Bengaluru · <a href="mailto:prathosh@iisc.ac.in">prathosh@iisc.ac.in</a></p>
+    <p class="disclaimer">⚠ Please use it only for <strong>non-Vedic chants</strong>, and remove all diacritical marks before pasting the text.</p>
+    <div class="pills">
+      <a class="pill primary" href="#try">Try it</a>
+      <a class="pill" href="#vagbodhini">Vāgbodhinī</a>
+      <a class="pill" href="#app">Bhāgavata-VāNi app</a>
+      <a class="pill" href="vagdhenu_paper.pdf">Paper</a>
+      <a class="pill" href="https://github.com/prathoshap/vagdhenu">Code</a>
+      <a class="pill" href="https://huggingface.co/prathoshap/vagdhenu">Weights</a>
+      <a class="pill" href="https://huggingface.co/datasets/prathoshap/vagdhenu-data">Dataset</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section id="try">
+    <h2>Try it</h2>
+    <p class="lead">Paste a Sanskrit verse in any Indian script — the meter is detected automatically.</p>
+    <div class="demo">
+      <iframe id="demoframe" loading="lazy" allow="autoplay" title="Vāgdhenu live demo"></iframe>
+    </div>
+    <p class="note">First chant takes ~10–60s while the model warms up. If the demo doesn't load,
+      use the <a id="backuplink" href="https://prathoshap-vagdhenu-demo.hf.space?__theme=light" target="_blank" rel="noopener">backup demo&nbsp;↗</a>.</p>
+  </section>
+
+  <section>
+    <h2>Listen — sample chants</h2>
+    <p class="lead">Six vṛttas rendered by this system — including verses from the shipped deployments.</p>
+    <div class="clips">
+      <figure class="clip">
+        <div class="clip-head">
+          <span class="badge">vasantatilakā</span>
+          <span class="src">Mahābhārata Tātparya Nirṇaya · 1.1</span>
+        </div>
+        <p class="verse">नारायणाय परिपूर्णगुणार्णवाय विश्वोदयस्थितिलयोन्नियतिप्रदाय ।<br>ज्ञानप्रदाय विबुधासुरसौख्यदुःखसत्कारणाय वितताय नमोनमस्ते</p>
+        <audio controls preload="none" src="audio/01_vasantatilaka_mbtn.mp3"></audio>
+      </figure>
+      <figure class="clip">
+        <div class="clip-head">
+          <span class="badge">śārdūlavikrīḍita</span>
+          <span class="src">Śrīmad Bhāgavatam · 1.1.2</span>
+        </div>
+        <p class="verse">जन्माद्यस्य यतोऽन्वयादितरतश्‍चार्थेष्वभिज्ञः स्वराट् तेने ब्रह्म हृदा य आदिकवये मुह्यन्ति यं सूरयः। तेजोवारिमृदां यथा विनिमयो यत्र त्रिसर्गो मृषा धाम्ना स्वेन सदा निरस्तकुहकं सत्यं परं धीमहि</p>
+        <audio controls preload="none" src="audio/02_shardulavikridita_bhagavatam.mp3"></audio>
+      </figure>
+      <figure class="clip">
+        <div class="clip-head">
+          <span class="badge">anuṣṭubh</span>
+          <span class="src">Śrīmad Bhāgavatam · 1.1.5</span>
+        </div>
+        <p class="verse">नैमिषेऽनिमिषक्षेत्रे ऋषयः शौनकादयः। सत्रं स्वर्गाय लोकाय सहस्रसममासत</p>
+        <audio controls preload="none" src="audio/03_anushtubh_bhagavatam.mp3"></audio>
+      </figure>
+      <figure class="clip">
+        <div class="clip-head">
+          <span class="badge">vaṃśastha</span>
+          <span class="src">Śrīmad Bhāgavatam · 1.3.5</span>
+        </div>
+        <p class="verse">पश्यन्त्यदो रूपमदभ्रचक्षुषः सहस्रपादोरुभुजाननाद्भुतम्। सहस्रमूर्धश्रवणाक्षिनासिकं सहस्रमौल्यम्बरकुण्डलोल्‍लसत्</p>
+        <audio controls preload="none" src="audio/04_vamshastha_bhagavatam.mp3"></audio>
+      </figure>
+      <figure class="clip">
+        <div class="clip-head">
+          <span class="badge">drutavilambita</span>
+          <span class="src">Śrīmad Bhāgavatam · 1.1.4</span>
+        </div>
+        <p class="verse">निगमकल्पतरोर्गलितं फलं शुकमुखादमृतद्रवसंयुतम्। पिबत भागवतं रसमालयं मुहुरहो रसिका भुवि भावुकाः</p>
+        <audio controls preload="none" src="audio/05_drutavilambita_bhagavatam.mp3"></audio>
+      </figure>
+      <figure class="clip">
+        <div class="clip-head">
+          <span class="badge">mālinī</span>
+          <span class="src">Narasiṃha stuti · retroflex tongue-twister</span>
+        </div>
+        <p class="verse">हठलुठ दल घिष्टोत्कण्ठदष्टोष्ठ विद्युत् सटशठ कठिनोरः पीठभित्सुष्ठुनिष्ठाम् ।<br>पठतिनुतव कण्ठाधिष्ठ घोरान्त्रमाला दह दह नरसिंहासह्यवीर्याहितं मे ॥</p>
+        <audio controls preload="none" src="audio/06_malini_narasimha.mp3"></audio>
+      </figure>
+    </div>
+  </section>
+
+  <section id="app">
+    <h2>Get the app</h2>
+    <p class="lead">These recitations power a free app for the complete Śrīmad Bhāgavatam.</p>
+    <div class="appcard">
+      <p class="app-sanskrit">॥ भागवतवाणी ॥</p>
+      <h3 class="app-name">Bhāgavata-VāNi</h3>
+      <p class="app-desc">The complete Śrīmad Bhāgavatam — all 12 skandhas — with synced audio recitation and
+        line-by-line karaoke highlighting, in 10 Indian scripts. Search any verse in any script, traditional
+        indices, works fully offline. Free, no ads.</p>
+      <div class="pills">
+        <a class="pill primary" href="https://bhagavatavani.com" target="_blank" rel="noopener">Open web app&nbsp;↗</a>
+        <a class="pill" href="https://play.google.com/store/apps/details?id=in.prathosh.bhagavatavani" target="_blank" rel="noopener">Google&nbsp;Play&nbsp;↗</a>
+        <a class="pill" href="https://apps.apple.com/app/bhagavatavani/id6784783567" target="_blank" rel="noopener">App&nbsp;Store&nbsp;↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="vagbodhini">
+    <h2>Practise with it</h2>
+    <p class="lead">Vāgdhenu's chants power a companion tool that listens to <em>you</em>.</p>
+    <div class="appcard">
+      <p class="app-sanskrit">॥ वाग्बोधिनी ॥</p>
+      <h3 class="app-name">Vāgbodhinī</h3>
+      <p class="app-desc">A Sanskrit chant tutor. Paste any śloka (or prose) in any script, hear its
+        metre-aware reference chant rendered by Vāgdhenu, then chant along — a Sanskrit speech model
+        scores <strong>every syllable</strong> and shows you what to fix. For classical (laukika) Sanskrit.</p>
+      <div class="pills">
+        <a class="pill primary" href="https://prathosh.in/vagbodhini/" target="_blank" rel="noopener">Open Vāgbodhinī&nbsp;↗</a>
+        <a class="pill" href="https://github.com/prathoshap/sushrota-sanskrit-asr" target="_blank" rel="noopener">GitHub&nbsp;↗</a>
+        <a class="pill" href="https://huggingface.co/prathoshap/sushrota-sanskrit-asr" target="_blank" rel="noopener">ASR&nbsp;model&nbsp;↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>About</h2>
+    <p>Vāgdhenu maps a metrical verse to its chanted <em>pārāyaṇa</em> recitation. Its voice is a
+    flow-matching TTS backbone <strong>retrained on a purpose-recorded, carefully designed
+    single-speaker Sanskrit chant corpus</strong> (~5 hours), with a further voice-steering retrain;
+    the neural vocoder is likewise fine-tuned for the chant register. Around the trained model sits
+    the machinery a faithful Sanskrit chant pipeline needs: a script-aware frontend that routes
+    Sanskrit through Kannada orthography (avoiding the Hindi schwa-deletion that Devanagari triggers);
+    visarga sandhi with the jihvāmūlīya and upadhmānīya allophones; the aspiration contrast; the three
+    sibilants and the full retroflex series kept distinct; homorganic anusvāra and vocalic ṝ; and a
+    vṛtta-aware mechanism that detects the meter and selects a matched reference under the
+    <em>half-reference rule</em>. The retrained model reaches an expert MOS of about <strong>4.6</strong>,
+    and dense conjuncts — including retroflex aspirates — render correctly, the class earlier
+    architectures could not crack.</p>
+  </section>
+
+  <section class="deploy">
+    <h2>Deployments</h2>
+    <p class="lead">This system produced two corpora at scale.</p>
+    <p>● <strong>Mahābhārata Tātparya Nirṇaya</strong> — 32 chapters, 5,183 verses (~17.5h) ·
+       <a href="https://www.youtube.com/playlist?list=PLL1s8qiaGy0IP0G_PhlwaGA5EOfzoKrV_">video series ↗</a></p>
+    <p>● <strong>Śrīmad Bhāgavatam</strong> — ~18,000 verses across 12 books ·
+       <a href="https://www.youtube.com/playlist?list=PLDiYyVdyo2Sc">karaoke-video series ↗</a></p>
+  </section>
+
+  <footer>
+    Developed and maintained by <strong>Prof. Prathosh, Indian Institute of Science, Bengaluru</strong>.<br>
+    Code Apache-2.0 · data CC-BY-4.0 · base models AI4Bharat IndicF5 &amp; NVIDIA BigVGAN-v2 (MIT).
+  </footer>
+</div>
+<script>
+(function(){
+  // ece A6000 only (no per-visitor quota). HF Space kept ONLY as an automatic fallback
+  // if ece is unreachable. (HF_SHARE=0 → no proactive HF routing; it threw ZeroGPU quota notices.)
+  var ECE = "https://demo.prathosh.in/?__theme=light";
+  var HF  = "https://prathoshap-vagdhenu-demo.hf.space?__theme=light";
+  var HF_SHARE = 0.0;   // 0 = everyone on ece (HF only as down-fallback)
+  var frame = document.getElementById("demoframe");
+  function use(url){ frame.src = url; }
+  if (Math.random() < HF_SHARE) { use(HF); return; }
+  // ece for the rest; if it's unreachable within 6s, fall back to HF too
+  var done = false, ctrl = new AbortController();
+  var timer = setTimeout(function(){ if(!done){ done=true; ctrl.abort(); use(HF); } }, 6000);
+  fetch(ECE, {mode:"no-cors", signal:ctrl.signal, cache:"no-store"})
+    .then(function(){ if(!done){ done=true; clearTimeout(timer); use(ECE); } })
+    .catch(function(){ if(!done){ done=true; clearTimeout(timer); use(HF); } });
+})();
+</script>
+</body>
+</html>
