@@ -1,10 +1,21 @@
+--extra-index-url https://download.pytorch.org/whl/cu121
 fastapi>=0.115
 uvicorn[standard]>=0.30
 numpy>=1.26
 soundfile>=0.12
-torch>=2.2
-transformers>=4.48
+torch==2.4.1
+torchaudio==2.4.1
+transformers==4.46.1
 accelerate>=1.0
 sentencepiece>=0.2
 safetensors>=0.4
 git+https://github.com/huggingface/parler-tts.git
+scipy
+pydub
+vocos==0.1.0
+x-transformers
+librosa==0.11.0
+huggingface_hub
+indic-transliteration
+bigvgan
+git+https://github.com/ai4bharat/IndicF5.git@13f7c4d627cc10111aea8fe9c0039462cacacdc7

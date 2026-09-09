@@ -1,3 +1,18 @@
+import os
+import sys
+import site
+
+# HOTFIX: Docker host library poisoning causes cudnnGetVersion crash. 
+# We force the process to restart itself with the correct pip library path!
+if "CUDNN_FIXED" not in os.environ:
+    try:
+        cudnn_lib = os.path.join(site.getsitepackages()[0], "nvidia", "cudnn", "lib")
+        os.environ["LD_LIBRARY_PATH"] = f"{cudnn_lib}:{os.environ.get('LD_LIBRARY_PATH', '')}"
+        os.environ["CUDNN_FIXED"] = "1"
+        os.execv(sys.executable, [sys.executable] + sys.argv)
+    except Exception:
+        pass
+
 import torch
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
